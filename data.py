@@ -1,45 +1,38 @@
 import pandas as pd
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+import Levenshtein as lev
 
-data1 = {
-    'District': ['Kathmandu', 'Kavre palanchowk', 'Dhanusa'],
-    'KPI_1' : [ .8, .75, .85]
-}
+dataset1 = [
+    {"District": "Kathmandu", "KPI_1": 0.8},
+    {"District": "Kavre palanchowk", "KPI_1": 0.75},
+    {"District": "Dhanusa", "KPI_1": 0.85}
+]
 
-data2 = {
-    'District': ['Kathmandu', 'Kavrepalanchowk', 'Dhanusha'],
-    'KPI_2' : [.35, .65, .6]
-}
-
-dataset1 = pd.DataFrame(data1)
-
-dataset2 = pd.DataFrame(data2)
-
-def find_best_match(distict, district_list):
-    return process.extractOne(distict, district_list, scorer=fuzz.ratio)[0]
-
-dataset1['District'] = dataset1['District'].apply(lambda x: find_best_match(x, dataset2['District']) )
+dataset2 = [
+    {"District": "Kathmandu", "KPI_2": 0.35},
+    {"District": "Kavrepalanchowk", "KPI_2": 0.65},
+    {"District": "Dhanusha", "KPI_2": 0.6}
+]
 
 
-merged_dataset = pd.merge(dataset1, dataset2, on='District')
-print(merged_dataset)
+for i, data1 in enumerate(dataset1):
+    district1 = data1["District"]
+    
+    matching_district = None
+    kpi2 = None
 
+    for j, data2 in enumerate(dataset2):
+        district2 = data2["District"]
+        kpi2 = data2["KPI_2"]
 
+        if i == j:
+            similarity_ratio = lev.ratio(district1, district2)
+            if similarity_ratio > 0.8:
+                data1["District"] = data2["District"]
 
-
-
-
-
-
-
-# District | KPI_1
-# Kathmandu | .8
-# Kavre palanchowk | .75
-# Dhanusa | .85
-
-# District | KPI_2
-# Kathmandu | .35
-# Kavrepalanchowk | .65
-# Dhanusha | .6
-
+    
+df1 = pd.DataFrame(dataset1)
+df2 = pd.DataFrame(dataset2)
+    
+  
+df = pd.merge(df1, df2, on='District')
+print(df)
