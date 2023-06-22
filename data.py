@@ -1,7 +1,7 @@
 import pandas as pd
 
 data1 = {
-    'District': ['Kathmandu', 'Kavrepalanchowk', 'Dhanusa'],
+    'District': ['Kathmandu', 'Kavre palanchowk', 'Dhanusa'],
     'KPI_1' : [0.8, 0.75, 0.85]
 }
 
@@ -13,6 +13,9 @@ data2 = {
 dataset1 = pd.DataFrame(data1)
 
 dataset2 = pd.DataFrame(data2)
+
+dataset1['District'] = dataset1['District'].replace('Kavre palanchowk', 'Kavrepalanchowk')
+
 
 merged_dataset = pd.merge(dataset1, dataset2, on='District')
 print(merged_dataset)
