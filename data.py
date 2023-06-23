@@ -1,5 +1,5 @@
 import pandas as pd
-import Levenshtein as lev
+from difflib import get_close_matches
 
 dataset1 = [
     {"District": "Kathmandu", "KPI_1": 0.8},
@@ -13,24 +13,16 @@ dataset2 = [
     {"District": "Dhanusha", "KPI_2": 0.6}
 ]
 
-
-for data1 in dataset1:
-    district1 = data1["District"]
-    
-    matching_district = None
-    kpi2 = None
-
-    for data2 in dataset2:
-        district2 = data2["District"]
-        kpi2 = data2["KPI_2"]
-
-        similarity_ratio = lev.ratio(district1, district2)
-        if similarity_ratio > 0.8:
-            data1["District"] = data2["District"]
-
-    
 df1 = pd.DataFrame(dataset1)
 df2 = pd.DataFrame(dataset2)
+
+def find_closest_match(word, choices):
+    matches = get_close_matches(word, choices)
+    return matches[0] if matches else None
+
+districts2 = df2['District'].to_list()
+
+df1['District'] = df2["District"].apply(lambda x: find_closest_match(x, districts2))    
     
   
 df = pd.merge(df1, df2, on='District')
