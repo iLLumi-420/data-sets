@@ -14,20 +14,19 @@ dataset2 = [
 ]
 
 
-for i, data1 in enumerate(dataset1):
+for data1 in dataset1:
     district1 = data1["District"]
     
     matching_district = None
     kpi2 = None
 
-    for j, data2 in enumerate(dataset2):
+    for data2 in dataset2:
         district2 = data2["District"]
         kpi2 = data2["KPI_2"]
 
-        if i == j:
-            similarity_ratio = lev.ratio(district1, district2)
-            if similarity_ratio > 0.8:
-                data1["District"] = data2["District"]
+        similarity_ratio = lev.ratio(district1, district2)
+        if similarity_ratio > 0.8:
+            data1["District"] = data2["District"]
 
     
 df1 = pd.DataFrame(dataset1)
